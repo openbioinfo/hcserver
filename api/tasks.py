@@ -1,10 +1,11 @@
+print "tasks exec..."
 import json
 from flask_restful import Resource
-from api import api,Base,engine
 from sqlalchemy import Column,Integer,String,ForeignKey
 from sqlalchemy.orm import sessionmaker
-from macs import macs_
-from cmds import cmds_
+from api import api,Base,engine
+import macs
+import cmds
 from tools import obj2dict
 from flask import request
 
@@ -13,10 +14,10 @@ Session = sessionmaker(bind=engine)
 class tasks_(Base):
     
     __tablename__ = "tasks"
-
+    __table_args__ = {'extend_existing': True}
     taskid = Column("taskId",Integer,primary_key=True,autoincrement=True)
-    macid = Column("macId",Integer,ForeignKey(macs_.id))
-    commandid = Column("cmdId",Integer,ForeignKey(cmds_.cid))
+    macid = Column("macId",Integer,ForeignKey(macs.macs_.id))
+    commandid = Column("cmdId",Integer,ForeignKey(cmds.cmds_.cid))
     status = Column("status",Integer)
 
     def __repr__(self):
@@ -26,8 +27,10 @@ class Tasks(Resource):
 
     @staticmethod
     def get(filterDict={}):
-        if request.args:
+        try:
             filterDict = dict(request.args.items())
+        except:
+            pass
         session = Session()
         ts = session.query(tasks_).filter_by(**filterDict).all()
         ts = [ obj2dict(t) for t in ts ]
@@ -42,14 +45,14 @@ class Tasks(Resource):
         session = Session()
         session.add(obj)
         session.commit()
+        odict = obj2dict(obj)
         session.close()
-        return {},200
+        return odict,200
 
 class Task(Resource):
 
     @staticmethod
     def get(tid):
-       
         session = Session()
         m = session.query(tasks_).filter(tasks_.taskid==tid).first()
         m = obj2dict(m)
@@ -66,3 +69,4 @@ class Task(Resource):
 
 api.add_resource(Tasks,"/tasks/")
 api.add_resource(Task,"/tasks/<tid>/")
+print "tasks loaded..."

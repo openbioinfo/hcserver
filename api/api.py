@@ -1,4 +1,5 @@
 
+print "api exec..."
 from flask import Flask
 from flask_restful import Api
 
@@ -10,8 +11,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-engine = create_engine("sqlite:///data.db")
+engine = create_engine("sqlite:////home/deju/DevWork/http-commands/hcserver/api/data.db")
 
-import cmds
-import macs
 import tasks
+import macs
+import cmds
+print "api loaded..."

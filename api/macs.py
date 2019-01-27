@@ -1,3 +1,4 @@
+print "macs exec..."
 import json
 from flask_restful import Resource
 from api import api, Base,engine
@@ -11,7 +12,7 @@ Session = sessionmaker(bind=engine)
 class macs_(Base):
 
     __tablename__ = "macs"
-
+    __table_args__ = {'extend_existing': True} 
     id = Column("id",Integer,primary_key=True,autoincrement=True)
     macid = Column("macid",Integer,index=True,unique=True)
     region = Column("region",String)
@@ -62,3 +63,4 @@ class Mac(Resource):
 
 api.add_resource(Macs,"/macs/")
 api.add_resource(Mac,"/macs/<mid>/")
+print "macs loaded..."

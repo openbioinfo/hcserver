@@ -1,3 +1,4 @@
+print "cmds exec..."
 import json
 from api import api,Base,engine
 from sqlalchemy import Column,Integer,String
@@ -5,14 +6,13 @@ from sqlalchemy.orm import sessionmaker
 from tools import obj2dict
 from flask_restful import Resource
 from flask import request
-from auth import auth
 
 Session = sessionmaker(bind=engine)
 
 class cmds_(Base):
     
     __tablename__ = "cmds"
-
+    __table_args__ = {'extend_existing': True} 
     cid = Column("cmdId",Integer,primary_key=True,autoincrement=True)
     content = Column("content",String)
 
@@ -22,7 +22,7 @@ class cmds_(Base):
 class Cmds(Resource):
 
     @staticmethod
-    def get(self):
+    def get():
         session = Session()
         outs = session.query(cmds_).all()
         outs = [ obj2dict(out) for out in outs ]
@@ -37,8 +37,9 @@ class Cmds(Resource):
         obj = cmds_(**idict)
         session.add(obj)
         session.commit()
+        odict = obj2dict(obj)
         session.close()
-        return {} , 200
+        return odict , 200
 
 class Cmd(Resource) :   
 
@@ -60,3 +61,5 @@ class Cmd(Resource) :
 
 api.add_resource(Cmds,"/cmds/")
 api.add_resource(Cmd,"/cmds/<cid>/")
+print "cmds loaded()"
+
