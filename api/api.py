@@ -9,7 +9,6 @@ api = Api(app,prefix="/api/v1")
 from sqlalchemy import Column, String, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
 Base = declarative_base()
 engine = create_engine("sqlite:////home/deju/DevWork/http-commands/hcserver/api/data.db")
 

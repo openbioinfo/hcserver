@@ -19,6 +19,7 @@ class tasks_(Base):
     macid = Column("macId",Integer,ForeignKey(macs.macs_.id))
     commandid = Column("cmdId",Integer,ForeignKey(cmds.cmds_.cid))
     status = Column("status",Integer)
+    detail = Column("log",String)
 
     def __repr__(self):
         return '<task %s>' % self.taskid
@@ -32,13 +33,13 @@ class Tasks(Resource):
         except:
             pass
         session = Session()
-        ts = session.query(tasks_).filter_by(**filterDict).all()
+        ts = session.query(tasks_).filter_by(**filterDict).order_by(tasks_.taskid).all()
         ts = [ obj2dict(t) for t in ts ]
         session.close()
         return ts
 
     @staticmethod
-    def post(idict=None):
+    def post(idict):
         if not idict:
             idict = json.loads(request.data)
         obj = tasks_(**idict)
@@ -60,12 +61,22 @@ class Task(Resource):
         return m,200
 
     @staticmethod
-    def delete():
-        pass
+    def delete(tid):
+        session = Session()
+        session.query(tasks_).filter(tasks_.taskid==tid).delete()
+        session.commit()
+        session.close()
+        return {},200
 
     @staticmethod
-    def put():
-        pass
+    def put(tid,idict=None):
+        session = Session()
+        if not idict:
+            idict = json.loads(request.data)
+        m = session.query(tasks_).filter(tasks_.taskid==tid).update(idict)
+        session.commit()
+        session.close()
+        return {},200
 
 api.add_resource(Tasks,"/tasks/")
 api.add_resource(Task,"/tasks/<tid>/")

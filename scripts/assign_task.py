@@ -23,7 +23,7 @@ def main(pyfile,ms):
         ms = macs_list
 
     for m in ms:
-        task = {"commandid":cid,"macid":m,"status":0}
+        task = {"commandid":cid,"macid":m,"status":-1}
         out = tasks.Tasks.post(task)
         print out
 
