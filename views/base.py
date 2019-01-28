@@ -1,7 +1,6 @@
 
 from flask import Blueprint,render_template
 
-
 base = Blueprint("base",__name__)
 
 
